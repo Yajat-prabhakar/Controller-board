@@ -7,6 +7,7 @@ Control Windows and type seamlessly using an Xbox One S (or any XInput) controll
 ## Quick Start
 
 ### 1. Launching the App
+
 Double-click **[`run.bat`](run.bat)** to launch the overlay in the background without a console window, or run from a terminal:
 
 ```powershell
@@ -44,26 +45,26 @@ Look for the green controller icon in your **Windows System Tray** (bottom-right
 
 Tilt the **Left Stick** in any of the 8 directions to highlight an outer cell, or release the stick to return to the **Center (`●`)** cell. Inside each cell, buttons follow standard reading order: **`Y` (Top)** → **`X` (Left)** → **`B` (Right)** → **`A` (Bottom)**.
 
-```
-          LEFT COLUMN                     MIDDLE COLUMN                    RIGHT COLUMN
-   ┌───────────────────────┐       ┌───────────────────────┐       ┌───────────────────────┐
-   │      ↖ UP-LEFT        │       │         ↑ UP          │       │      ↗ UP-RIGHT       │
-   │        [Y: A]         │       │        [Y: E]         │       │        [Y: I]         │
-   │  [X: B]      [B: C]   │       │  [X: F]      [B: G]   │       │  [X: J]      [B: K]   │
-   │        [A: D]         │       │        [A: H]         │       │        [A: L]         │
-   └───────────────────────┘       └───────────────────────┘       └───────────────────────┘
-   ┌───────────────────────┐       ┌───────────────────────┐       ┌───────────────────────┐
-   │        ← LEFT         │       │       • CENTER        │       │        → RIGHT        │
-   │        [Y: M]         │       │      [Y: Enter]       │       │        [Y: Q]         │
-   │  [X: N]      [B: O]   │       │ [X: Bksp]  [B: Space] │       │  [X: R]      [B: S]   │
-   │        [A: P]         │       │       [A: 123]        │       │        [A: T]         │
-   └───────────────────────┘       └───────────────────────┘       └───────────────────────┘
-   ┌───────────────────────┐       ┌───────────────────────┐       ┌───────────────────────┐
-   │     ↙ DOWN-LEFT       │       │        ↓ DOWN         │       │     ↘ DOWN-RIGHT      │
-   │        [Y: U]         │       │        [Y: Y]         │       │        [Y: ?]         │
-   │  [X: V]      [B: W]   │       │  [X: Z]      [B: .]   │       │  [X: !]      [B: ']   │
-   │        [A: X]         │       │        [A: ,]         │       │        [A: -]         │
-   └───────────────────────┘       └───────────────────────┘       └───────────────────────┘
+```text
+      LEFT COLUMN                MIDDLE COLUMN               RIGHT COLUMN
+┌───────────────────────┐  ┌───────────────────────┐  ┌───────────────────────┐
+│       ↖ UP-LEFT       │  │         ↑ UP          │  │      ↗ UP-RIGHT       │
+│        [Y: A]         │  │        [Y: E]         │  │        [Y: I]         │
+│    [X: B]   [B: C]    │  │    [X: F]   [B: G]    │  │    [X: J]   [B: K]    │
+│        [A: D]         │  │        [A: H]         │  │        [A: L]         │
+└───────────────────────┘  └───────────────────────┘  └───────────────────────┘
+┌───────────────────────┐  ┌───────────────────────┐  ┌───────────────────────┐
+│        ← LEFT         │  │       • CENTER        │  │        → RIGHT        │
+│        [Y: M]         │  │      [Y: Enter]       │  │        [Y: Q]         │
+│    [X: N]   [B: O]    │  │ [X: Bksp]  [B: Space] │  │    [X: R]   [B: S]    │
+│        [A: P]         │  │       [A: 123]        │  │        [A: T]         │
+└───────────────────────┘  └───────────────────────┘  └───────────────────────┘
+┌───────────────────────┐  ┌───────────────────────┐  ┌───────────────────────┐
+│     ↙ DOWN-LEFT       │  │        ↓ DOWN         │  │     ↘ DOWN-RIGHT      │
+│        [Y: U]         │  │        [Y: Y]         │  │        [Y: ?]         │
+│    [X: V]   [B: W]    │  │    [X: Z]   [B: .]    │  │    [X: !]   [B: ']    │
+│        [A: X]         │  │        [A: ,]         │  │        [A: -]         │
+└───────────────────────┘  └───────────────────────┘  └───────────────────────┘
 ```
 
 * **Center Cell (`●` Neutral Stick):**
@@ -111,31 +112,31 @@ Press **Menu (`☰`)** on your controller or click the system tray icon to summo
 
 ## Project Structure
 
-```
+```text
 controller-keyborad/
-├── main.py                      # Application entry point with single-instance mutex
-├── run.bat                      # Windows launcher (runs pythonw without terminal window)
-├── requirements.txt             # Dependencies (PyQt6)
+├── main.py                       # Application entry point with single-instance mutex
+├── run.bat                       # Windows launcher (runs pythonw without terminal window)
+├── requirements.txt              # Dependencies (PyQt6)
 ├── tools/
-│   └── build_dictionary.py      # Script to rebuild 80k bilingual English + Hinglish dictionary
+│   └── build_dictionary.py       # Script to rebuild 80k bilingual English + Hinglish dictionary
 ├── controller_keyboard/
-│   ├── app.py                   # 120Hz polling loop, overlay coordination & tray icon
-│   ├── engine.py                # Core input engine, chords, typing buffer & mouse emulation
-│   ├── layout.py                # 3x3 ABCD & Symbol matrix definitions & stick sector mapper
-│   ├── predictor.py             # Prefix Trie + Bigram scoring + user learning engine
-│   ├── sendinput.py             # Native Win32 SendInput keyboard & mouse backend
-│   ├── winutil.py               # WS_EX_NOACTIVATE, fullscreen detection & autostart registry
-│   ├── xinput.py                # Direct ctypes XInput 1.4 wrapper (buttons, sticks, rumble)
+│   ├── app.py                    # 120Hz polling loop, overlay coordination & tray icon
+│   ├── engine.py                 # Core input engine, chords, typing buffer & mouse emulation
+│   ├── layout.py                 # 3x3 ABCD & Symbol matrix definitions & stick sector mapper
+│   ├── predictor.py              # Prefix Trie + Bigram scoring + user learning engine
+│   ├── sendinput.py              # Native Win32 SendInput keyboard & mouse backend
+│   ├── winutil.py                # WS_EX_NOACTIVATE, fullscreen detection & autostart registry
+│   ├── xinput.py                 # Direct ctypes XInput 1.4 wrapper (buttons, sticks, rumble)
 │   ├── data/
-│   │   ├── dictionary.json      # 80k unigrams & 30k bigrams
-│   │   └── words.txt            # Frequency-sorted word list
+│   │   ├── dictionary.json       # 80k unigrams & 30k bigrams
+│   │   └── words.txt             # Frequency-sorted word list
 │   └── ui/
-│       ├── hud.py               # Transparent 3x3 keyboard HUD with live preview bar & toasts
-│       ├── settings.py          # Fullscreen dimmed Game Bar settings overlay
-│       └── theme.py             # Xbox green dark theme & stylesheet
+│       ├── hud.py                # Transparent 3x3 keyboard HUD with live preview bar & toasts
+│       ├── settings.py           # Fullscreen dimmed Game Bar settings overlay
+│       └── theme.py              # Xbox green dark theme & stylesheet
 └── tests/
-    ├── test_engine.py           # Unit tests for engine, chords, typing, and predictions
-    └── test_ui.py               # UI rendering & smoke tests
+    ├── test_engine.py            # Unit tests for engine, chords, typing, and predictions
+    └── test_ui.py                # UI rendering & smoke tests
 ```
 
 ---
@@ -147,5 +148,3 @@ To run the complete test suite:
 ```powershell
 .\.venv\Scripts\python.exe -m unittest discover -s tests -v
 ```
-#   C o n t r o l l e r - b o a r d  
- # Controller-board
