@@ -179,7 +179,7 @@ class KeyboardHUD(OverlayWidget):
         y += PRED_H + 8
 
         e = self.engine
-        upper = self._caps or (e.cfg["typing"]["auto_capitalize"] and is_sentence_start(e.history))
+        upper = self._caps or e.shift_held or (e.cfg["typing"]["auto_capitalize"] and is_sentence_start(e.history))
         now = time.monotonic()
         for i, cell in enumerate(layout.CELLS):
             r, c = divmod(i, 3)
@@ -202,10 +202,11 @@ class KeyboardHUD(OverlayWidget):
     def _draw_header(self, p, rect):
         e = self.engine
         x, y = rect.x(), rect.y() + 3
-        x += self._pill(p, x, y, "ABC" if e.layer == "letters" else "123", True, theme.ACCENT) + 6
-        x += self._pill(p, x, y, "CAPS", self._caps, theme.FACE_COLORS["Y"]) + 6
-        x += self._pill(p, x, y, "ALT", e.alt_held, theme.FACE_COLORS["X"]) + 6
-        x += self._pill(p, x, y, "WIN", e.win_held, theme.FACE_COLORS["X"]) + 6
+        x += self._pill(p, x, y, "ABC" if e.layer == "letters" else "123", True, theme.ACCENT) + 5
+        x += self._pill(p, x, y, "CAPS", self._caps, theme.FACE_COLORS["Y"]) + 5
+        x += self._pill(p, x, y, "SHIFT", e.shift_held, theme.FACE_COLORS["A"]) + 5
+        x += self._pill(p, x, y, "CTRL", e.ctrl_held, theme.FACE_COLORS["B"]) + 5
+        x += self._pill(p, x, y, "ALT", e.alt_held, theme.FACE_COLORS["X"]) + 5
         p.setFont(_font(11, False))
         p.setPen(theme.TEXT_DIM)
         right = QRectF(x, rect.y(), rect.right() - x, rect.height())

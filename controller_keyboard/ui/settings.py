@@ -296,13 +296,17 @@ class SettingsOverlay(QWidget):
     def _map_card(self):
         c = Card("🗺  Button map")
         rows = [
-            ("LT (hold)", "Alt"), ("RT", "Tab   (LT + RT = Alt+Tab)"),
-            ("LB", "Caps Lock"), ("RB (hold)", "Windows key"),
-            ("Right stick", "Mouse pointer"), ("R3 / L3", "Left / right click"),
-            ("Left stick", "Keyboard: pick cell · Desktop: scroll"),
-            ("Y X B A", "Keyboard: type · Desktop: Space Bksp Esc Enter"),
-            ("D-Pad", "Keyboard: predictions · Desktop: arrows"),
-            ("Stick centre", "Y ↵ Enter · X ⌫ · B ␣ Space · A 123"),
+            ("RB (hold)", "Ctrl  (RB + key for shortcuts)"),
+            ("LB (hold)", "Shift · Tap = Caps Lock"),
+            ("LB + X", "📋 Copy (Ctrl+C)"),
+            ("LB + Y", "📄 Paste (Ctrl+V)"),
+            ("LB + A", "↩ Undo (Ctrl+Z)"),
+            ("LB + B", "✂ Cut (Ctrl+X)"),
+            ("LB + D-Pad", "▲ All · ▼ Save · ◀ Close · ▶ Find"),
+            ("LT (hold)", "Alt   (LT + RT = Alt+Tab)"),
+            ("RT", "Tab   (RB + RT = Ctrl+Tab · LB + RT = Shift+Tab)"),
+            ("Right stick", "Mouse pointer · R3/L3 = Click"),
+            ("Back (ML / MR)", "Map on controller to LB+X & LB+Y!"),
         ]
         html = "<table cellspacing='0' cellpadding='3'>" + "".join(
             f"<tr><td style='color:#16C60C; font-weight:600; padding-right:10px'>{a}</td>"

@@ -16,9 +16,9 @@ View = toggle keyboard, Menu = toggle settings, View+Menu = pause / resume.
 import math
 
 from . import layout
-from .keys import (VK_BACK, VK_CAPITAL, VK_DELETE, VK_DOWN, VK_LEFT, VK_LMENU, VK_LWIN,
-                   VK_RETURN, VK_RIGHT, VK_SPACE, VK_TAB, VK_UP, VK_VOLUME_DOWN,
-                   VK_VOLUME_UP, vk_from_name)
+from .keys import (VK_BACK, VK_CAPITAL, VK_DELETE, VK_DOWN, VK_LEFT, VK_LCONTROL,
+                   VK_LMENU, VK_LSHIFT, VK_LWIN, VK_RETURN, VK_RIGHT, VK_SPACE,
+                   VK_TAB, VK_UP, VK_VOLUME_DOWN, VK_VOLUME_UP, vk_from_name)
 
 DESKTOP, KEYBOARD, SETTINGS = "desktop", "keyboard", "settings"
 
@@ -90,7 +90,11 @@ class Engine:
         self.layer = "letters"
         self.cell = "C"
         self.alt_held = False
+        self.ctrl_held = False
         self.win_held = False
+        self.shift_held = False
+        self._lb_down_time = 0.0
+        self._lb_used_for_chord = False
         self.history = ""
         self.suggestions = []
         self.last_state = None
@@ -150,8 +154,11 @@ class Engine:
         if not self.active:
             return
 
+        consumed = set()
         if self.mode != SETTINGS:
-            self._global_buttons(pressed, released)
+            consumed = self._global_buttons(pressed, released, buttons, now)
+        pressed = pressed - consumed
+
         self._move_mouse(st.rx, st.ry, dt)
         self._mouse_click("R3", "left", pressed, released)
         self._mouse_click("L3", "right", pressed, released)
@@ -249,24 +256,79 @@ class Engine:
             self.set_mode(self._mode_before_settings)
 
     # ------------------------------------------------------ global buttons
-    def _global_buttons(self, pressed, released):
+    def _send_shortcut(self, vk, toast_msg):
+        was_ctrl = self.ctrl_held
+        if not was_ctrl:
+            self.sender.key_down(VK_LCONTROL)
+        self.sender.tap(vk)
+        if not was_ctrl:
+            self.sender.key_up(VK_LCONTROL)
+        self._emit("toast", text=toast_msg)
+        self._emit("rumble", strength=0.25, ms=50)
+        self.reset_context()
+
+    def _global_buttons(self, pressed, released, buttons, now):
+        consumed = set()
         if "LT" in pressed:
             self._set_modifier("alt", True)
         if "LT" in released:
             self._set_modifier("alt", False)
+
         if "RB" in pressed:
-            self._set_modifier("win", True)
+            self._set_modifier("ctrl", True)
         if "RB" in released:
-            self._set_modifier("win", False)
-        if "RT" in pressed:
-            self.sender.tap(VK_TAB)
-            self.reset_context()
+            self._set_modifier("ctrl", False)
+
         if "LB" in pressed:
-            self.sender.tap(VK_CAPITAL)
+            self.shift_held = True
+            self._lb_down_time = now
+            self._lb_used_for_chord = False
             self._emit("changed")
 
+        if "LB" in released:
+            self.shift_held = False
+            if not self._lb_used_for_chord and (now - self._lb_down_time < 0.35):
+                self.sender.tap(VK_CAPITAL)
+            self._emit("changed")
+
+        # Mortal Kombat style chords while holding LB
+        if "LB" in buttons:
+            chords = {
+                "X": (ord("C"), "📋 Copied (Ctrl+C)"),
+                "Y": (ord("V"), "📄 Pasted (Ctrl+V)"),
+                "A": (ord("Z"), "↩ Undo (Ctrl+Z)"),
+                "B": (ord("X"), "✂ Cut (Ctrl+X)"),
+                "DPAD_UP": (ord("A"), "☑ Select All (Ctrl+A)"),
+                "DPAD_DOWN": (ord("S"), "💾 Saved (Ctrl+S)"),
+                "DPAD_LEFT": (ord("W"), "✕ Closed Tab (Ctrl+W)"),
+                "DPAD_RIGHT": (ord("F"), "🔍 Search (Ctrl+F)"),
+            }
+            for b, (vk, msg) in chords.items():
+                if b in pressed:
+                    self._lb_used_for_chord = True
+                    self._send_shortcut(vk, msg)
+                    consumed.add(b)
+
+        if "RT" in pressed:
+            if self.shift_held:
+                self.sender.key_down(VK_LSHIFT)
+                self.sender.tap(VK_TAB)
+                self.sender.key_up(VK_LSHIFT)
+            else:
+                self.sender.tap(VK_TAB)
+            self.reset_context()
+            consumed.add("RT")
+
+        return consumed
+
     def _set_modifier(self, which, down):
-        attr, vk = ("alt_held", VK_LMENU) if which == "alt" else ("win_held", VK_LWIN)
+        if which == "alt":
+            attr, vk = "alt_held", VK_LMENU
+        elif which == "ctrl":
+            attr, vk = "ctrl_held", VK_LCONTROL
+        else:
+            attr, vk = "win_held", VK_LWIN
+
         if getattr(self, attr) == down:
             return
         setattr(self, attr, down)
@@ -279,6 +341,7 @@ class Engine:
 
     def _release_modifiers(self):
         self._set_modifier("alt", False)
+        self._set_modifier("ctrl", False)
         self._set_modifier("win", False)
 
     def _release_everything(self):
@@ -399,15 +462,15 @@ class Engine:
         for index, d in enumerate(DPAD_ORDER):
             if d in pressed:
                 self._emit("activity")
-                if self.alt_held or self.win_held:
-                    vk = DPAD_ARROWS[d]   # Win+Arrows snaps windows, Alt+Tab+Arrows picks one
+                if self.alt_held or self.ctrl_held or self.win_held:
+                    vk = DPAD_ARROWS[d]   # Win+Arrows snaps windows, Ctrl+Arrows navigates words
                     self.sender.tap(vk)
                     self._start_repeat(d, lambda vk=vk: self.sender.tap(vk), now)
                 else:
                     self.accept_suggestion(index)
 
     def press_key(self, key):
-        modifiers = self.alt_held or self.win_held
+        modifiers = self.alt_held or self.ctrl_held or self.win_held
         if key == layout.LAYER:
             self.layer = "symbols" if self.layer == "letters" else "letters"
             self._emit("changed")
@@ -424,13 +487,13 @@ class Engine:
                 self._append("\n" if key == layout.ENTER else " ")
             return
         if modifiers:
-            # Real key press so shortcuts like Win+E / Alt+F work.
+            # Real key press so shortcuts like Ctrl+C, Win+E, Alt+F work.
             self.sender.type_char_vk(key.lower())
             self.reset_context()
             return
         ch = key
         if ch.isalpha():
-            upper = self.sender.caps_lock_on() or (
+            upper = self.sender.caps_lock_on() or self.shift_held or (
                 self.cfg["typing"]["auto_capitalize"] and is_sentence_start(self.history))
             ch = ch.upper() if upper else ch.lower()
         self.sender.type_text(ch)
@@ -440,7 +503,7 @@ class Engine:
     def _apply_case(self, word, current, before):
         if word == "i" or word.startswith("i'"):
             word = "I" + word[1:]
-        if self.sender.caps_lock_on():
+        if self.sender.caps_lock_on() or self.shift_held:
             return word.upper()
         if current:
             if len(current) > 1 and current.isupper():

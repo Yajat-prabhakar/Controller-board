@@ -8,7 +8,8 @@ from controller_keyboard import layout  # noqa: E402
 from controller_keyboard.config import Config  # noqa: E402
 from controller_keyboard.engine import (DESKTOP, KEYBOARD, SETTINGS, Engine,  # noqa: E402
                                         is_sentence_start, text_context)
-from controller_keyboard.keys import VK_BACK, VK_CAPITAL, VK_LMENU, VK_LWIN, VK_RETURN, VK_TAB, VK_UP  # noqa: E402
+from controller_keyboard.keys import (VK_BACK, VK_CAPITAL, VK_LCONTROL, VK_LMENU,  # noqa: E402
+                                    VK_LSHIFT, VK_LWIN, VK_RETURN, VK_TAB, VK_UP)
 from controller_keyboard.predictor import Predictor  # noqa: E402
 from controller_keyboard.xinput import ControllerState  # noqa: E402
 
@@ -164,11 +165,59 @@ class EngineTests(unittest.TestCase):
         self.h.frame(())
         self.assertEqual(s.log, [("down", VK_LMENU), ("tap", VK_TAB), ("tap", VK_TAB), ("up", VK_LMENU)])
 
-    def test_win_and_caps(self):
+    def test_ctrl_and_caps(self):
         s = self.h.sender
         self.h.press("RB")
-        self.h.press("LB")
-        self.assertEqual(s.log, [("down", VK_LWIN), ("up", VK_LWIN), ("tap", VK_CAPITAL)])
+        self.assertEqual(s.log, [("down", VK_LCONTROL), ("up", VK_LCONTROL)])
+        s.log.clear()
+        self.h.press("LB")  # quick tap < 350ms
+        self.assertEqual(s.log, [("tap", VK_CAPITAL)])
+
+    def test_mortal_kombat_chords(self):
+        h = self.h
+        s = h.sender
+        # Hold LB + press X -> Copy (Ctrl + C)
+        h.frame(("LB",))
+        h.frame(("LB", "X"))
+        h.frame(("LB",))
+        h.frame(())
+        self.assertIn(("down", VK_LCONTROL), s.log)
+        self.assertIn(("tap", ord("C")), s.log)
+        self.assertIn(("up", VK_LCONTROL), s.log)
+        s.log.clear()
+
+        # Hold LB + press Y -> Paste (Ctrl + V)
+        h.frame(("LB",))
+        h.frame(("LB", "Y"))
+        h.frame(("LB",))
+        h.frame(())
+        self.assertIn(("down", VK_LCONTROL), s.log)
+        self.assertIn(("tap", ord("V")), s.log)
+        self.assertIn(("up", VK_LCONTROL), s.log)
+        s.log.clear()
+
+        # Hold LB + press A -> Undo (Ctrl + Z)
+        h.frame(("LB",))
+        h.frame(("LB", "A"))
+        h.frame(("LB",))
+        h.frame(())
+        self.assertIn(("tap", ord("Z")), s.log)
+        s.log.clear()
+
+        # Hold LB + press B -> Cut (Ctrl + X)
+        h.frame(("LB",))
+        h.frame(("LB", "B"))
+        h.frame(("LB",))
+        h.frame(())
+        self.assertIn(("tap", ord("X")), s.log)
+        s.log.clear()
+
+        # Hold LB + D-Pad Up -> Select All (Ctrl + A)
+        h.frame(("LB",))
+        h.frame(("LB", "DPAD_UP"))
+        h.frame(("LB",))
+        h.frame(())
+        self.assertIn(("tap", ord("A")), s.log)
 
     def test_typing_letters_and_center_keys(self):
         h = self.h
@@ -285,8 +334,8 @@ class EngineTests(unittest.TestCase):
         h = self.h
         h.frame(("RB",))
         h.frame(("RB", "VIEW", "MENU"))
-        self.assertIn(("up", VK_LWIN), h.sender.log)
-        self.assertFalse(h.engine.win_held)
+        self.assertIn(("up", VK_LCONTROL), h.sender.log)
+        self.assertFalse(h.engine.ctrl_held)
 
 
 class PredictorTests(unittest.TestCase):

@@ -25,10 +25,10 @@ Look for the green controller icon in your **Windows System Tray** (bottom-right
 | **View (`⧉`)** | Global | Toggle floating **3×3 Keyboard HUD** on/off |
 | **Menu (`☰`)** | Global | Open / close the **Xbox Game Bar Settings Overlay** |
 | **View + Menu (`⧉ + ☰`)** | Global | **Pause / Resume** all controller mapping (e.g., when launching a game) |
-| **`LT` (Hold)** | Global | Hold **`Alt`** |
-| **`RT` (Tap)** | Global | Tap **`Tab`** *(Hold `LT` + tap `RT` for `Alt + Tab` window switching)* |
-| **`LB` (Tap)** | Global | Toggle **`Caps Lock`** |
-| **`RB` (Hold)** | Global | Hold **`Windows / Home`** *(Tap `RB` for Start Menu; `RB + D-Pad` to snap windows)* |
+| **`RB` (Hold)** | Global | Hold **`Control (Ctrl)`** *(Hold `RB` + any key/chord; `RB + RT` = `Ctrl + Tab`)* |
+| **`LB` (Hold)** | Global | Hold **`Shift`** *(types uppercase, highlights text; quick tap toggles **`Caps Lock`**)* |
+| **`LT` (Hold)** | Global | Hold **`Alt`** *(Hold `LT` + tap `RT` for `Alt + Tab` window switching)* |
+| **`RT` (Tap)** | Global | Tap **`Tab`** *(or `Shift + Tab` when holding `LB`)* |
 | **Right Stick** | Global | Move **Mouse Cursor** (smooth acceleration curve with deadzone) |
 | **`R3` (Right Stick Click)** | Global | **Left Mouse Click** |
 | **`L3` (Left Stick Click)** | Global | **Right Mouse Click** |
@@ -40,6 +40,26 @@ Look for the green controller icon in your **Windows System Tray** (bottom-right
 | **D-Pad (`▲ ◀ ▶ ▼`)** | Desktop | Arrow keys (`Up`, `Left`, `Right`, `Down`) |
 
 ---
+
+## ⚡ Mortal Kombat Style Quick Chords (Copy / Paste / Undo / Cut)
+
+Hold **`LB`** and instantly press any face button or D-pad direction—**no need to aim the joystick**:
+
+* **`LB + X`** → **Copy (`Ctrl + C`)**
+* **`LB + Y`** → **Paste (`Ctrl + V`)**
+* **`LB + A`** → **Undo (`Ctrl + Z`)**
+* **`LB + B`** → **Cut (`Ctrl + X`)**
+* **`LB + D-Pad ▲`** → **Select All (`Ctrl + A`)**
+* **`LB + D-Pad ▼`** → **Save (`Ctrl + S`)**
+* **`LB + D-Pad ◀`** → **Close Tab (`Ctrl + W`)**
+* **`LB + D-Pad ▶`** → **Find / Search (`Ctrl + F`)**
+
+### 🎮 EvoFox One S Universal Back Buttons (`ML` & `MR`)
+On your EvoFox One S controller, the back macro buttons can be programmed on hardware:
+1. Hold the **Macro/Setting (M)** button on the back until the indicator flashes.
+2. Press the back paddle (**`ML`** or **`MR`**).
+3. Press **`LB + X`** (for Copy) or **`LB + Y`** (for Paste).
+4. Press **`M`** again to save. Now your back paddles instantly Copy and Paste with a single click!
 
 ## 3×3 Clustered ABCD Matrix
 
