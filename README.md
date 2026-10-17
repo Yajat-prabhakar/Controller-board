@@ -25,10 +25,10 @@ Look for the green controller icon in your **Windows System Tray** (bottom-right
 | **View (`⧉`)** | Global | Toggle floating **3×3 Keyboard HUD** on/off |
 | **Menu (`☰`)** | Global | Open / close the **Xbox Game Bar Settings Overlay** |
 | **View + Menu (`⧉ + ☰`)** | Global | **Pause / Resume** all controller mapping (e.g., when launching a game) |
-| **`RB` (Hold)** | Global | Hold **`Control (Ctrl)`** *(Hold `RB` + any key/chord; `RB + RT` = `Ctrl + Tab`)* |
-| **`LB` (Hold)** | Global | Hold **`Shift`** *(types uppercase, highlights text; quick tap toggles **`Caps Lock`**)* |
+| **`LB` (Hold)** | Global | Hold **`Control (Ctrl)`** *(Hold `LB` + face buttons for MK shortcuts; `LB + RT` = `Ctrl + Tab`)* |
+| **`RB` (Hold)** | Global | Hold **`Shift`** *(types uppercase, selects text; quick tap toggles **`Caps Lock`**; `RB + RT` = `Shift + Tab`)* |
 | **`LT` (Hold)** | Global | Hold **`Alt`** *(Hold `LT` + tap `RT` for `Alt + Tab` window switching)* |
-| **`RT` (Tap)** | Global | Tap **`Tab`** *(or `Shift + Tab` when holding `LB`)* |
+| **`RT` (Tap)** | Global | Tap **`Tab`** *(or `Shift + Tab` when holding `RB` / `Ctrl + Tab` when holding `LB`)* |
 | **Right Stick** | Global | Move **Mouse Cursor** (smooth acceleration curve with deadzone) |
 | **`R3` (Right Stick Click)** | Global | **Left Mouse Click** |
 | **`L3` (Left Stick Click)** | Global | **Right Mouse Click** |

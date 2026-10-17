@@ -296,15 +296,15 @@ class SettingsOverlay(QWidget):
     def _map_card(self):
         c = Card("🗺  Button map")
         rows = [
-            ("RB (hold)", "Ctrl  (RB + key for shortcuts)"),
-            ("LB (hold)", "Shift · Tap = Caps Lock"),
+            ("LB (hold)", "Ctrl / Shortcuts  (MK Chords)"),
+            ("RB (hold)", "Shift · Tap = Caps Lock"),
             ("LB + X", "📋 Copy (Ctrl+C)"),
             ("LB + Y", "📄 Paste (Ctrl+V)"),
             ("LB + A", "↩ Undo (Ctrl+Z)"),
             ("LB + B", "✂ Cut (Ctrl+X)"),
             ("LB + D-Pad", "▲ All · ▼ Save · ◀ Close · ▶ Find"),
             ("LT (hold)", "Alt   (LT + RT = Alt+Tab)"),
-            ("RT", "Tab   (RB + RT = Ctrl+Tab · LB + RT = Shift+Tab)"),
+            ("RT", "Tab   (LB + RT = Ctrl+Tab · RB + RT = Shift+Tab)"),
             ("Right stick", "Mouse pointer · R3/L3 = Click"),
             ("Back (ML / MR)", "Map on controller to LB+X & LB+Y!"),
         ]

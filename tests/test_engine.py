@@ -167,10 +167,10 @@ class EngineTests(unittest.TestCase):
 
     def test_ctrl_and_caps(self):
         s = self.h.sender
-        self.h.press("RB")
+        self.h.press("LB")
         self.assertEqual(s.log, [("down", VK_LCONTROL), ("up", VK_LCONTROL)])
         s.log.clear()
-        self.h.press("LB")  # quick tap < 350ms
+        self.h.press("RB")  # quick tap < 350ms
         self.assertEqual(s.log, [("tap", VK_CAPITAL)])
 
     def test_mortal_kombat_chords(self):
@@ -233,7 +233,7 @@ class EngineTests(unittest.TestCase):
     def test_caps_lock_types_uppercase(self):
         h = self.h
         h.keyboard_mode()
-        h.press("LB")
+        h.press("RB")
         h.type_key("q")
         self.assertEqual(h.sender.text, "Q")
 
@@ -272,9 +272,9 @@ class EngineTests(unittest.TestCase):
     def test_completion_matches_capitalisation(self):
         h = self.h
         h.keyboard_mode()
-        h.press("LB")
+        h.press("RB")
         h.type_key("t")
-        h.press("LB")
+        h.press("RB")
         h.type_key("h")
         h.engine.suggestions = ["the"]
         h.press("DPAD_UP")
@@ -293,11 +293,11 @@ class EngineTests(unittest.TestCase):
     def test_modifier_held_sends_real_keys(self):
         h = self.h
         h.keyboard_mode()
-        h.frame(("RB",))
+        h.frame((), lt=1.0)
         stick = _cell_stick("U")
-        h.frame(("RB",), **stick)
-        h.frame(("RB", "Y"), **stick)   # U + Y = 'e'  -> Win+E
-        h.frame(("RB", "DPAD_UP"))      # Win+Up (maximise), not a prediction
+        h.frame((), lt=1.0, **stick)
+        h.frame(("Y",), lt=1.0, **stick)   # U + Y = 'e'  -> Alt+E
+        h.frame(("DPAD_UP",), lt=1.0)      # Alt+Up, not a prediction
         h.frame(())
         self.assertIn(("vkchar", "e"), h.sender.log)
         self.assertIn(("tap", VK_UP), h.sender.log)
@@ -332,8 +332,8 @@ class EngineTests(unittest.TestCase):
 
     def test_pause_releases_held_modifier(self):
         h = self.h
-        h.frame(("RB",))
-        h.frame(("RB", "VIEW", "MENU"))
+        h.frame(("LB",))
+        h.frame(("LB", "VIEW", "MENU"))
         self.assertIn(("up", VK_LCONTROL), h.sender.log)
         self.assertFalse(h.engine.ctrl_held)
 

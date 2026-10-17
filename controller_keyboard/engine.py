@@ -93,8 +93,8 @@ class Engine:
         self.ctrl_held = False
         self.win_held = False
         self.shift_held = False
-        self._lb_down_time = 0.0
-        self._lb_used_for_chord = False
+        self._rb_down_time = 0.0
+        self._rb_used_for_typing = False
         self.history = ""
         self.suggestions = []
         self.last_state = None
@@ -274,24 +274,24 @@ class Engine:
         if "LT" in released:
             self._set_modifier("alt", False)
 
-        if "RB" in pressed:
+        if "LB" in pressed:
             self._set_modifier("ctrl", True)
-        if "RB" in released:
+        if "LB" in released:
             self._set_modifier("ctrl", False)
 
-        if "LB" in pressed:
+        if "RB" in pressed:
             self.shift_held = True
-            self._lb_down_time = now
-            self._lb_used_for_chord = False
+            self._rb_down_time = now
+            self._rb_used_for_typing = False
             self._emit("changed")
 
-        if "LB" in released:
+        if "RB" in released:
             self.shift_held = False
-            if not self._lb_used_for_chord and (now - self._lb_down_time < 0.35):
+            if not self._rb_used_for_typing and (now - self._rb_down_time < 0.35):
                 self.sender.tap(VK_CAPITAL)
             self._emit("changed")
 
-        # Mortal Kombat style chords while holding LB
+        # Mortal Kombat style chords while holding LB (Control)
         if "LB" in buttons:
             chords = {
                 "X": (ord("C"), "📋 Copied (Ctrl+C)"),
@@ -305,12 +305,12 @@ class Engine:
             }
             for b, (vk, msg) in chords.items():
                 if b in pressed:
-                    self._lb_used_for_chord = True
                     self._send_shortcut(vk, msg)
                     consumed.add(b)
 
         if "RT" in pressed:
             if self.shift_held:
+                self._rb_used_for_typing = True
                 self.sender.key_down(VK_LSHIFT)
                 self.sender.tap(VK_TAB)
                 self.sender.key_up(VK_LSHIFT)
@@ -343,6 +343,10 @@ class Engine:
         self._set_modifier("alt", False)
         self._set_modifier("ctrl", False)
         self._set_modifier("win", False)
+        if self.shift_held:
+            self.shift_held = False
+            self.sender.key_up(VK_LSHIFT)
+            self._emit("changed")
 
     def _release_everything(self):
         self._release_modifiers()
@@ -427,7 +431,13 @@ class Engine:
                 vk = vk_from_name(mapping.get(b))
                 if vk is None:
                     continue
-                self.sender.tap(vk)
+                if self.shift_held:
+                    self._rb_used_for_typing = True
+                    self.sender.key_down(VK_LSHIFT)
+                    self.sender.tap(vk)
+                    self.sender.key_up(VK_LSHIFT)
+                else:
+                    self.sender.tap(vk)
                 self.reset_context()
                 if vk in REPEATABLE_VKS:
                     self._start_repeat(b, lambda vk=vk: self.sender.tap(vk), now)
@@ -470,6 +480,8 @@ class Engine:
                     self.accept_suggestion(index)
 
     def press_key(self, key):
+        if self.shift_held:
+            self._rb_used_for_typing = True
         modifiers = self.alt_held or self.ctrl_held or self.win_held
         if key == layout.LAYER:
             self.layer = "symbols" if self.layer == "letters" else "letters"
@@ -516,6 +528,8 @@ class Engine:
         return word
 
     def accept_suggestion(self, index):
+        if self.shift_held:
+            self._rb_used_for_typing = True
         if index >= len(self.suggestions):
             return
         word = self.suggestions[index]
